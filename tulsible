@@ -17,8 +17,8 @@
 cd "$(dirname "$(realpath "$0")")"
 
 # One can override these on the command line
-playbook_flags=""
-ansible_flags=""
+playbook_flags="-e @vars/main.yml"
+ansible_flags="-e @vars/main.yml"
 
 git_current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 case "$git_current_branch" in
