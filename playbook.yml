@@ -1,0 +1,4 @@
+- name: Do nothing, but do it with Ansible
+  hosts: localhost
+  gather_facts: no
+  roles: []

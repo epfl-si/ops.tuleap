@@ -1,0 +1,7 @@
+all:
+  hosts:
+    localhost:
+      # Bugware variables to prevent Ansible from whining and/or
+      # attempting to ssh to localhost:
+      ansible_connection: local
+      ansible_python_interpreter: "{{ ansible_playbook_python }}"
