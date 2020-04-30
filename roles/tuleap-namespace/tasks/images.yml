@@ -1,0 +1,9 @@
+- include_vars: images-vars.yml
+
+- name: tuleap-aio-dev image
+  openshift_imagestream:
+    metadata:
+      name: tuleap-aio-dev
+      namespace: "{{ k8s_namespace }}"
+    from: "{{ tuleap_aio_dev_image_name_and_tag }}"
+    tag: latest

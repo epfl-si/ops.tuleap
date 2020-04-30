@@ -1,0 +1,3 @@
+- name: Kubernetes ImageStreams and BuildConfigs
+  import_tasks: images.yml
+  tags: images

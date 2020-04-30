@@ -1,4 +1,5 @@
-- name: Do nothing, but do it with Ansible
+- name: Kubernetes images and builds
   hosts: localhost
   gather_facts: no
-  roles: []
+  roles:
+    - role: roles/tuleap-namespace

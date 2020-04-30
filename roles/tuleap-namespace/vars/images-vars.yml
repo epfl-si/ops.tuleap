@@ -1,0 +1,2 @@
+# The Web server image on Docker Hub
+tuleap_aio_dev_image_name_and_tag: enalean/tuleap-aio-dev:c6-php73-nginx
