@@ -1,3 +1,15 @@
 - name: Kubernetes ImageStreams and BuildConfigs
   import_tasks: images.yml
   tags: images
+
+- name: Define web app route
+  import_tasks: approute.yml
+  tags: app
+
+- name: Define web app service
+  import_tasks: appservice.yml
+  tags: app
+
+- name: Define web app deployment
+  import_tasks: appdeployment.yml
+  tags: app

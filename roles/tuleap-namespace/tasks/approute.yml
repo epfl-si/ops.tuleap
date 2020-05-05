@@ -1,0 +1,20 @@
+- name: tuleap app route for production
+  openshift:
+    state: latest
+    content: |
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: {{ appname }}.{{ appdomain }}
+        namespace: {{ k8s_namespace }}
+      spec:
+        host: {{ appname }}.{{ appdomain }}
+        wildcardPolicy: None
+        port:
+          targetPort: "80"
+        tls:
+          termination: edge
+        to:
+          kind: Service
+          name: {{ appname }}
+          weight: 100

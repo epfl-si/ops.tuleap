@@ -1,0 +1,21 @@
+- name: tuleap app service
+  openshift:
+    state: latest
+    content: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: {{ appname }}
+        namespace:  {{ k8s_namespace }}
+        labels:
+          app:    {{ appname }}
+      spec:
+        ports:
+          - name: "80"
+            port: 80
+            protocol: TCP
+            targetPort: 80
+        selector:
+          app: {{ appname }}
+          role: main_app
+        type: ClusterIP

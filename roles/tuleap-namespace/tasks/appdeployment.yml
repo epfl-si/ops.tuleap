@@ -1,0 +1,56 @@
+- name: tuleap app service
+  openshift:
+    state: latest
+    content: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          app: {{ appname }}
+        name: {{ appname }}
+        namespace: {{ k8s_namespace }}
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: {{ appname }}
+        template:
+          metadata:
+            labels:
+              app:    {{ appname }}
+              role: main_app
+          spec:
+            containers:
+              - name: {{ appname }}
+                image: 'docker-registry.default.svc:5000/{{ k8s_namespace }}/tuleap-aio-dev'
+                imagePullPolicy: Always # IfNotPresent Never
+                # envFrom:
+                #   - secretRef:
+                #       name: ...
+                ports:
+                  - containerPort: 80
+                    protocol: TCP
+                # volumeMounts:
+                #   -
+                #     mountPath: "/usr/local/apache2/htdocs"
+                #     name: "htdocs"
+                resources:
+                  limits:
+                    cpu: 200m
+                    memory: 200Mi
+                  requests:
+                    cpu: 100m
+                    memory: 100Mi
+                # env:
+                #   - name: 
+                #     value:
+            # volumes:
+            #   -
+            #     name: "htdocs"
+            #     persistentVolumeClaim:
+            #       claimName: blog-data
+            dnsPolicy: ClusterFirst
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
