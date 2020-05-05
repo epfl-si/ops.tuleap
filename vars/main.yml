@@ -1,1 +1,4 @@
 k8s_namespace: tuleap-prod
+eyaml_keys:
+  priv: "keybase/team/epfl_tuleap_prod/eyaml/private_key.pkcs7.pem"
+  pub: "{{ playbook_dir }}/eyaml/epfl_tuleap_prod.pem"
