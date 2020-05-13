@@ -1,0 +1,71 @@
+# Note that this is inteded for development only. 
+# Passwords are hardcoded here and must not to be used in production!
+
+version: '3'
+services:
+    app:
+      build: docker14
+      # image: enalean/tuleap-aio:centos7
+      environment:
+        - DO_NOT_LAUNCH_FORGEUPGRADE=true
+        - TULEAP_INSTALL_SKIP_DB=true
+        - TULEAP_FQDN=tuleap.dev.jkldsa.com
+        - MYSQL_HOST=db
+        - MYSQL_DATABASE=tuleap
+        - MYSQL_USER=tuleap
+        - MYSQL_PASSWORD=tuleap
+      volumes:
+        - ./data/tuleap:/data
+        - ./config/nginx:/etc/nginx
+        - ./config/php-fpm.d:/etc/opt/remi/php73/php-fpm.d
+
+        - ./docker14/DockerAioRunCommand.php:/usr/share/tuleap/src/tuleap-cfg/Command/DockerAioRunCommand.php
+        - ./docker14/Tuleap.php:/usr/share/tuleap/src/tuleap-cfg/Command/Docker/Tuleap.php
+        - ./docker14/setup.el7.sh:/usr/share/tuleap/tools/setup.el7.sh
+
+      labels:
+        - traefik.docker.network=traefik
+        - traefik.http.routers.tuleap.rule=Host("tuleap.${DEV_DOMAIN}")
+        - traefik.http.routers.tuleap.tls=true
+        - traefik.http.services.tuleap.loadbalancer.server.port=80
+      #   - traefik.http.services.tuleap.loadbalancer.server.scheme=https
+      # ports:
+      #   - 4433:443
+      networks:
+        - traefik
+        - default
+
+    db:
+      image: mysql:5.7
+      command: --sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+      environment:
+        - MYSQL_ROOT_PASSWORD=ROOT
+        - MYSQL_ROOT_HOST=%
+        - MYSQL_DATABASE=tuleap
+        - MYSQL_USER=tuleap
+        - MYSQL_PASSWORD=tuleap
+      volumes:
+        - ./data/mysql:/var/lib/mysql
+      networks:
+        - default
+
+    dbadmin:
+      image: phpmyadmin/phpmyadmin
+      environment:
+        - PMA_HOST=db
+        - PMA_ABSOLUTE_URI=https://tuleap-db.${DEV_DOMAIN}
+        - PMA_ARBITRARY=1
+      volumes:
+        - /sessions
+      labels:
+        - traefik.docker.network=traefik
+        - traefik.http.routers.tuleap-db.rule=Host("tuleap-db.${DEV_DOMAIN}")
+        - traefik.http.routers.tuleap-db.tls=true
+        - traefik.http.services.tuleap-db.loadbalancer.server.port=80
+      networks:
+        - traefik
+        - default
+
+networks:
+  traefik:
+    external: true

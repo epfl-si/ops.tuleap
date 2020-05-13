@@ -1,0 +1,4 @@
+remove php73-php-pecl-redis4
+update
+run
+quit
