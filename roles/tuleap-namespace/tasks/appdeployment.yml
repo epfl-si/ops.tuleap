@@ -22,7 +22,7 @@
           spec:
             containers:
               - name: {{ appname }}
-                image: 'docker-registry.default.svc:5000/{{ k8s_namespace }}/tuleap-aio-dev'
+                image: 'docker-registry.default.svc:5000/{{ k8s_namespace }}/tuleap'
                 imagePullPolicy: Always # IfNotPresent Never
                 # envFrom:
                 #   - secretRef:
