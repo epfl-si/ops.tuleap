@@ -1,0 +1,89 @@
+- include_vars: mysql-vars.yml
+- include_vars: tuleap-vars.yml
+
+
+# ------------------------------------------------------------ SQL root password
+# This command will fail when the root password was set previously
+- name: Check if root password is set
+  shell: >
+    mysqladmin -u root status
+  changed_when: false
+  failed_when: false
+  register: root_pwd_check
+
+- name: Set MySQL root password for the first time (root@localhost)
+  mysql_user:
+    name: root
+    password: "{{ mysql_credentials.local.root_password | eyaml(eyaml_keys) }}"
+    host: localhost
+    login_unix_socket: "/var/lib/mysql/mysql.sock"
+    state: present
+  when: root_pwd_check.rc == 0
+
+- name: Set MySQL root password for 127.0.0.1, ::1
+  mysql_user:
+    name: root
+    password: "{{ mysql_credentials.local.root_password | eyaml(eyaml_keys) }}"
+    host: "{{ item }}"
+    login_user: root
+    login_password: "{{ mysql_credentials.local.root_password | eyaml(eyaml_keys) }}"
+    login_unix_socket: "/var/lib/mysql/mysql.sock"
+    state: present
+  with_items:
+    - 127.0.0.1
+  when: root_pwd_check.rc == 0
+
+
+- name: Removes anonymous user account for localhost
+  mysql_user:
+    name: ''
+    host: localhost
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_credentials.local.root_password | eyaml(eyaml_keys) }}"
+    login_unix_socket: "/var/lib/mysql/mysql.sock"
+
+# ----------------------------------------------------------------------- Tuleap
+- name: set compatible sql-mode for mysql
+  blockinfile:
+    path: "/etc/opt/rh/rh-mysql57/my.cnf.d/rh-mysql57-mysql-server.cnf"
+    block: "sql-mode=NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+    insertafter: '\[server\]'
+  register: mysqld_conf
+
+- name: reload mysql
+  service:
+    name: rh-mysql57-mysqld
+    state: restarted
+  when: mysqld_conf.changed
+
+- name: check presence of /root/.tuleap_passwd ~ tuleap already initialized 
+  stat:
+    path: /root/.tuleap_passwd
+  register: tuleap_trace
+
+# /usr/share/tuleap/tools/setup.el7.sh --configure --server-name=tuleap.dev.jkldsa.com --mysql-server=localhost --mysql-password=ROOT  --assumeyes
+- name: initialize tuleap configuration
+  command: 
+    argv:
+      - /usr/share/tuleap/tools/setup.el7.sh
+      - --configure --assumeyes
+      - --server-name="{{ tuleap.server_name }}"
+      - --mysql-server="{{ mysql_credentials.local.host }}"
+      - --mysql-password="{{ mysql_credentials.local.root_password | eyaml(eyaml_keys) }}"
+  when: tuleap_trace.stat.exists == False
+
+- name: ssl key
+  copy:
+    src: "{{ tuleap.ssl.privkey_path }}"
+    dest: "/etc/pki/tls/private/localhost.key.pem"
+
+- name: ssl cert 
+  copy:
+    src: "{{ tuleap.ssl.pubcert_path }}"
+    dest: "/etc/pki/tls/certs/localhost.cert.pem"
+
+# - name: add server name to localhost
+#   blockinfile:
+#     path: "/etc/hosts"
+#     block: "127.0.0.1  {{ tuleap.server_name }}"

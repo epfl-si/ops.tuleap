@@ -1,1 +1,4 @@
 /ansible-tmp
+/eyaml/private_key.pkcs7.pem
+*.pyc
+__pycache__

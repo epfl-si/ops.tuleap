@@ -5,3 +5,18 @@ all:
       # attempting to ssh to localhost:
       ansible_connection: local
       ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
+    vm:
+      ansible_host: 10.95.96.46
+      ansible_port: 22
+      ansible_user: root
+
+    chroot:
+      ansible_host: 10.95.96.46
+      ansible_port: 22
+      ansible_user: centos
+
+    dev:
+      ansible_host: 10.95.64.26
+      ansible_port: 22
+      ansible_user: root

@@ -1,5 +1,29 @@
-- name: Kubernetes images and builds
-  hosts: localhost
-  gather_facts: no
+# - name: vm
+#   hosts: vm
+#   gather_facts: yes
+#   roles: 
+#     - role: roles/chrooted_centos
+
+# - name: chroot 
+#   hosts: chroot
+#   gather_facts: yes
+#   roles:
+#     - role: roles/tuleap-vm
+
+# - name: Kubernetes images and builds
+#   hosts: localhost
+#   gather_facts: no
+#   roles:
+#     - role: roles/tuleap-namespace
+
+- name: tuleap
+  hosts: dev
+  gather_facts: yes
   roles:
-    - role: roles/tuleap-namespace
+    - role: roles/tuleap-vm
+    # this only works with CentOS 6 !!!!!!!!!!!
+    # - {role: Enalean.Tuleap, tuleap_version=master, tuleap_domain=tuleap.dev.jkldsa.com}
+
+
+
+

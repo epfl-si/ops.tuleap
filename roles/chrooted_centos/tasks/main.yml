@@ -1,0 +1,66 @@
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+- name: Ensure chroot directory
+  file:
+    path: /centos7
+    state: directory
+    mode: '0755'
+
+- name: Ensure centos7 repo from mounted CD-ROM
+  yum_repository:
+    name: centos
+    description: Temporary Centos 7 base repo from CDROM
+    state: present
+    repo_gpgcheck: yes
+    enabled: no
+    gpgkey: https://ci.tuleap.net/yum/tuleap/gpg.key
+    baseurl: https://ci.tuleap.net/yum/tuleap/rhel/7/dev/x86_64/
+
+- name: check if chroot already initialized (yum binary is in place)
+  stat: 
+    path: /centos7/bin/yum
+  register: chrooted_base
+
+# Actually, this stopped working because the systems rants about 
+# "system is not registered to Red Hat Subscription Managemen"
+# probably this is enforced only after a grace period ?
+- name: Install base in the chroot path
+  command: yum -y install yum sudo --installroot=/centos7 --disablerepo='*' --enablerepo='centos' --releasever=7
+  when: chrooted_base.stat.exists == false
+
+- name: Create user for chroot installation
+  user:
+    name: centos
+    group: wheel
+    comment: Ansible chroot installation
+    home: /centos7/home/centos
+    shell: /bin/bash
+    uid: 1000
+    create_home: yes
+    # state: absent
+    # remove: yes
+
+- name: Add ssh keys
+  authorized_key:
+    user: centos
+    manage_dir: yes
+    state: present
+    key: '{{ item }}'
+    # exclusive yes deletes the file at every run leading to spurious changes
+    # exclusive: yes
+  with_items:
+    - https://github.com/multiscan.keys
+    - https://github.com/domq.keys
+
+- name: promote user centos to sudoer
+  copy:
+    dest: /centos7/etc/sudoers.d/centos
+    content: "centos  ALL=(ALL) NOPASSWD: ALL"
+  when: chrooted_base.stat.exists == true
+
+- name: create username uid relation for chroot environment
+  blockinfile:
+    path: /centos7/etc/passwd
+    block: centos:x:1000:10:Centos chroot install:/home/centos:/bin/bash

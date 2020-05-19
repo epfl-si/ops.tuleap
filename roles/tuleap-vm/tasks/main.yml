@@ -1,0 +1,9 @@
+- name: Install Tuleap
+  import_tasks: install.yml
+  tags: install
+
+- name: Configure Tuleap
+  import_tasks: configure.yml
+  tags: config
+
+
