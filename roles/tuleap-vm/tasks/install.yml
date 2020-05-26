@@ -54,3 +54,11 @@
     - tuleap-theme-flamingparrot 
     - tuleap-plugin-git 
     - tuleap-plugin-pullrequest
+    - tuleap-plugin-ldap
+
+- name: patch LDAP plugin to accept multiple entry patch for ldap search
+  lineinfile: 
+    path: /usr/share/tuleap/plugins/ldap/include/LDAP.class.php
+    regexp: 'if \(\$lri && count\(\$lri\) === 1\)'
+    line: '        if ($lri && count($lri) > 0) {'
+    create: no

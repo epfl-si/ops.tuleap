@@ -21,8 +21,19 @@ The main difficulty is being able to run ansible on a remote chroot. This can be
 This instals Tuleap on a Centos7 base. We cannot use the role provided by Tuleap as it is tuned for RHEL/Centos 6.
 It closely follow the [official installation guide][install]
 
+## Configuration
 
+### LDAP
+Configuration for the LDAP plugin is in 
+`/etc/tuleap/plugins/ldap/etc/ldap.inc`. Relevant parameters for EPFL: 
 
+```
+server: ldap.epfl.ch
+basedn: ou=idev-fsd,ou=si-idev,ou=si,o=epfl,c=ch
+```
+and the fact that the _unique idendifier_ is not `employeeNumber` but `uniqueidentifier`.
+
+Since the same `uid` can be found in several branches of the LDAP tree, a tiny patch was introduced in `/usr/share/tuleap/plugins/ldap/include/LDAP.class.php`. **NEEDS TESTING!**
 
 
 [install]: https://docs.tuleap.org/installation-guide/full-installation.html 
