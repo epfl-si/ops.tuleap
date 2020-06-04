@@ -12,7 +12,8 @@
 # do, wielding the private key from Keybase is left as an exercise to
 # the reader.
 tuleap:
-    server_name: tuleap.dev.jkldsa.com
+    branch: dev # stable | dev
+    server_name: tuleap-test.epfl.ch
     ssl:
       privkey_path: /keybase/team/epfl_idevfsd/certs/dev.jkldsa.com/privkey.pem
       pubcert_path: /keybase/team/epfl_idevfsd/certs/dev.jkldsa.com/fullchain.pem

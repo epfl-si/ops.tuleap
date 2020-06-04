@@ -1,3 +1,8 @@
+- include_vars: tuleap-vars.yml
+
+- debug:
+    msg: "Ansible Distribution: '{{ ansible_distribution }}'; release: '{{ ansible_distribution_release }}'; verstion: '{{ ansible_distribution_version }} '"
+
 - name: Disable SELinux
   selinux:
     state: disabled
@@ -7,10 +12,20 @@
     name: epel-release
     state: present
 
-- name: Ensure release-scl repo
+- name: Ensure release-scl repo (centos)
   package:
     name: centos-release-scl
     state: present
+  when: ansible_distribution == 'CentOS' 
+
+- name: Ensure scl and optional channels (RHEL)
+  rhsm_repository:
+    name: '{{ item }}' 
+    state: enabled
+  loop: 
+    - rhel-server-rhscl-7-rpms
+    - rhel-7-server-optional-rpms
+  when: ansible_distribution == 'RedHat' 
 
 - name: Ensure Remi repo
   package:
@@ -24,7 +39,7 @@
     state: present
     repo_gpgcheck: no
     enabled: yes
-    baseurl: https://ci.tuleap.net/yum/tuleap/rhel/7/dev/x86_64/
+    baseurl: 'https://ci.tuleap.net/yum/tuleap/rhel/7/{{ tuleap.branch }}/x86_64/'
     gpgkey: https://ci.tuleap.net/yum/tuleap/gpg.key
 
 - name: Ensure mysql installed
@@ -52,9 +67,17 @@
     - tuleap-plugin-graphontrackers 
     - tuleap-theme-burningparrot 
     - tuleap-theme-flamingparrot 
+    - tuleap-plugin-ldap
+
+# The following plugins have missing dependencies on RHEL (sclo-git212-git)
+- name: Ensure (CentOS only) tuleap plugins
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
     - tuleap-plugin-git 
     - tuleap-plugin-pullrequest
-    - tuleap-plugin-ldap
+  when: ansible_distribution == 'CentOS' 
 
 - name: patch LDAP plugin to accept multiple entry patch for ldap search
   lineinfile: 

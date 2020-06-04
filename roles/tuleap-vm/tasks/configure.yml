@@ -5,7 +5,7 @@
 # This command will fail when the root password was set previously
 - name: Check if root password is set
   shell: >
-    mysqladmin -u root status
+    /opt/rh/rh-mysql57/root/usr/bin/mysqladmin -u root status
   changed_when: false
   failed_when: false
   register: root_pwd_check
@@ -72,21 +72,30 @@
       - --mysql-password="{{ mysql_credentials.local.root_password | eyaml(eyaml_keys) }}"
   when: tuleap_trace.stat.exists == False
 
+# Install ssl certificates only for dev domain. 
+# Production should get official certs from the router
 - name: ssl key
   copy:
     src: "{{ tuleap.ssl.privkey_path }}"
     dest: "/etc/pki/tls/private/localhost.key.pem"
+  when: tuleap.server_name is search(devdomain)
 
 - name: ssl cert 
   copy:
     src: "{{ tuleap.ssl.pubcert_path }}"
     dest: "/etc/pki/tls/certs/localhost.cert.pem"
+  when: tuleap.server_name is search(devdomain)
 
 - name: ensure ldap authentication is selected
   lineinfile:
     path: /etc/tuleap/conf/local.inc
     regexp: '^\$sys_auth_type'
     line: "$sys_auth_type = 'ldap';"
+
+- name: ensure dir for ldap config
+  file:
+    path: /etc/tuleap/plugins/ldap/etc
+    state: directory
 
 - name: ensure LDAP configuration file
   template:

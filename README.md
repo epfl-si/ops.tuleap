@@ -35,5 +35,14 @@ and the fact that the _unique idendifier_ is not `employeeNumber` but `uniqueide
 
 Since the same `uid` can be found in several branches of the LDAP tree, a tiny patch was introduced in `/usr/share/tuleap/plugins/ldap/include/LDAP.class.php`. **NEEDS TESTING!**
 
+### GIT
+Once installed and enabled the git plugin, repositories can be created in projects. 
+
+There is no mechanism for cloning nor periodically polling remote repositories. Therefore, Tuleap repos will have to be used as extra remote where to push manually unless we add a cron job ourselves.
+
+
+
+
+
 
 [install]: https://docs.tuleap.org/installation-guide/full-installation.html 

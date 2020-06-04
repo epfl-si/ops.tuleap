@@ -6,17 +6,26 @@ all:
       ansible_connection: local
       ansible_python_interpreter: "{{ ansible_playbook_python }}"
 
-    vm:
+    rh8:
       ansible_host: 10.95.96.46
       ansible_port: 22
       ansible_user: root
 
-    chroot:
+    rh8_chroot:
       ansible_host: 10.95.96.46
       ansible_port: 22
       ansible_user: centos
 
+    # Centos7 development
     dev:
       ansible_host: 10.95.64.26
       ansible_port: 22
       ansible_user: root
+      appdomain: dev.jkldsa.com
+
+    # RHEL7 test
+    test:
+      ansible_host: 10.95.96.25
+      ansible_port: 22
+      ansible_user: root
+      appdomain: epfl.ch

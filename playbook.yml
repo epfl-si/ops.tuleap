@@ -17,7 +17,7 @@
 #     - role: roles/tuleap-namespace
 
 - name: tuleap
-  hosts: dev
+  hosts: test
   gather_facts: yes
   roles:
     - role: roles/tuleap-vm
