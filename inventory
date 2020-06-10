@@ -1,27 +1,27 @@
 all:
   hosts:
-    localhost:
-      # Bugware variables to prevent Ansible from whining and/or
-      # attempting to ssh to localhost:
-      ansible_connection: local
-      ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    # localhost:
+    #   # Bugware variables to prevent Ansible from whining and/or
+    #   # attempting to ssh to localhost:
+    #   ansible_connection: local
+    #   ansible_python_interpreter: "{{ ansible_playbook_python }}"
 
-    rh8:
-      ansible_host: 10.95.96.46
-      ansible_port: 22
-      ansible_user: root
+    # rh8:
+    #   ansible_host: 10.95.96.46
+    #   ansible_port: 22
+    #   ansible_user: root
 
-    rh8_chroot:
-      ansible_host: 10.95.96.46
-      ansible_port: 22
-      ansible_user: centos
+    # rh8_chroot:
+    #   ansible_host: 10.95.96.46
+    #   ansible_port: 22
+    #   ansible_user: centos
 
-    # Centos7 development
-    dev:
-      ansible_host: 10.95.64.26
-      ansible_port: 22
-      ansible_user: root
-      appdomain: dev.jkldsa.com
+    # # Centos7 development
+    # dev:
+    #   ansible_host: 10.95.64.26
+    #   ansible_port: 22
+    #   ansible_user: root
+    #   appdomain: dev.jkldsa.com
 
     # RHEL7 test
     test:
@@ -29,3 +29,17 @@ all:
       ansible_port: 22
       ansible_user: root
       appdomain: epfl.ch
+      tuleap_server_name: tuleap-test.epfl.ch
+
+    # ./tulsible -l vagrant [-t install]
+    vagrant:
+      ansible_ssh_host: 127.0.0.1
+      ansible_ssh_port: 2222
+      ansible_ssh_user: vagrant
+      ansible_ssh_private_key_file: .vagrant/machines/default/virtualbox/private_key
+      ansible_become: yes
+      become_method: sudo
+      tuleap_server_name: tuleap.dev.jkldsa.com
+
+
+

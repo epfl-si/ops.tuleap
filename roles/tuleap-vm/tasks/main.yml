@@ -1,3 +1,9 @@
+
+# To just debug: ./tulsible -l vagrant -t tmp
+- name: Debug
+  import_tasks: tmp.yml
+  tags: tmp
+
 - name: Install Tuleap
   import_tasks: install.yml
   tags: install

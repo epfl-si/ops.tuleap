@@ -1,0 +1,8 @@
+- include_vars: mysql-vars.yml
+- include_vars: tuleap-vars.yml
+
+- debug:
+    msg: "tuleap.server_name = '{{ tuleap.server_name }}'"
+
+- debug:
+    msg: "tuleap_server_name = '{{ tuleap_server_name }}'"

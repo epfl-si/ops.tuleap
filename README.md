@@ -36,13 +36,37 @@ and the fact that the _unique idendifier_ is not `employeeNumber` but `uniqueide
 Since the same `uid` can be found in several branches of the LDAP tree, a tiny patch was introduced in `/usr/share/tuleap/plugins/ldap/include/LDAP.class.php`. **NEEDS TESTING!**
 
 ### GIT
-Once installed and enabled the git plugin, repositories can be created in projects. 
+In principle, once installed and enabled the git plugin, repositories can be 
+created in projects. It is not straightforward to install though and I doubt
+it will work (see below).
 
-There is no mechanism for cloning nor periodically polling remote repositories. Therefore, Tuleap repos will have to be used as extra remote where to push manually unless we add a cron job ourselves.
+There is no mechanism for cloning nor periodically 
+polling remote repositories. Therefore, Tuleap repos will have to be used as 
+extra remote where to push manually unless we add a cron job ourselves.
 
+#### Git pluging installation
 
+The official rpm package for RHEL have several issues:
+ - a broken dependency on `sclo-git212-git` which needs an extra 
+   _CentOS community_ repository. It can be added to RHEL system;
+ - the plugin depends on gitolite3 and it is not clear if further configuration
+   is needed for it to work.
+ - there are various references to _codendi_ of which I found no traces except
+   for a very old (2009) [system][codendi] for application lifecycle 
+   management. 
+   * file `/etc/codendi/plugins/git/etc/config.inc` mentioned in the plugin
+     configuration page is absent;
+   * the plugin is supposed to create a `/var/lib/gitolite/.ssh/authorized_keys` 
+     file by mean of the 
+     `/usr/share/tuleap/plugins/git/bin/recreate_authorized_keys.sh` script 
+     which makes reference to the phantom _codendi_ project and is written for 
+     CentOS v. 6 and not suited for RHEL/CentOS 7 series. 
 
+Filed an [issue]:[issue1]. Let's see what happens.
 
 
 
 [install]: https://docs.tuleap.org/installation-guide/full-installation.html 
+[codendi]: http://codendi.org/
+[tracker]: https://tuleap.net/plugins/tracker
+[issue1]: https://tuleap.net/plugins/tracker/?aid=14963&group_id=101

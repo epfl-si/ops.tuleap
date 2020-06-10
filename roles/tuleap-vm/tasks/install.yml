@@ -32,6 +32,15 @@
     name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
     state: present
 
+- name: Ensure CentOS SCLO repo
+  yum_repository:
+    name: sclo
+    description: CentOS SCLO community repo (for fixing broken dependency in tuleap git plugin)
+    repo_gpgcheck: no
+    enabled: yes
+    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/sclo/
+    gpgkey: https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-SCLo
+    
 - name: Ensure Tuleap repo
   yum_repository:
     name: tuleap
@@ -68,16 +77,18 @@
     - tuleap-theme-burningparrot 
     - tuleap-theme-flamingparrot 
     - tuleap-plugin-ldap
-
-# The following plugins have missing dependencies on RHEL (sclo-git212-git)
-- name: Ensure (CentOS only) tuleap plugins
-  package:
-    name: "{{ item }}"
-    state: present
-  loop:
     - tuleap-plugin-git 
     - tuleap-plugin-pullrequest
-  when: ansible_distribution == 'CentOS' 
+
+# # The following plugins have missing dependencies on RHEL (sclo-git212-git)
+# - name: Ensure (CentOS only) tuleap plugins
+#   package:
+#     name: "{{ item }}"
+#     state: present
+#   loop:
+#     - tuleap-plugin-git 
+#     - tuleap-plugin-pullrequest
+#   when: ansible_distribution == 'CentOS' 
 
 - name: patch LDAP plugin to accept multiple entry patch for ldap search
   lineinfile: 
