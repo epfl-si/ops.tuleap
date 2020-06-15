@@ -64,6 +64,18 @@ The official rpm package for RHEL have several issues:
 
 Filed an [issue]:[issue1]. Let's see what happens.
 
+In the mean time, I have created a CentOS vagrant image VM to test with the 
+officially supported OS with an easy way to revert back. 
+There the keys are created and copied. Therefore, for the moment I have done the 
+same on the RHEL machine just to see if things start to work. Next issue is 
+the fact that git repos is queued for creation and never actually created
+ > The repository is in queue for creation. Please check back here in a few minutes
+
+After resetting the machine to base config (via snapshot and `yum undo`s), I have
+done the installation once more by hand. This time git works. I suspect that 
+the configuration script failed for some other reason and could not complete
+the installation. Now the idea is to get a brand new machine and retry with 
+ansible from scratch (this time I will create a snapshot as **first thing**).
 
 
 [install]: https://docs.tuleap.org/installation-guide/full-installation.html 
