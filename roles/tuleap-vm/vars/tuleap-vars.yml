@@ -17,3 +17,5 @@ tuleap:
     ssl:
       privkey_path: /keybase/team/epfl_idevfsd/certs/dev.jkldsa.com/privkey.pem
       pubcert_path: /keybase/team/epfl_idevfsd/certs/dev.jkldsa.com/fullchain.pem
+    site_admin_email: giovanni.cangiani@epfl.ch
+    contact_email: giovanni.cangiani@epfl.ch

@@ -1,56 +1,3 @@
-- include_vars: tuleap-vars.yml
-
-- debug:
-    msg: "Ansible Distribution: '{{ ansible_distribution }}'; release: '{{ ansible_distribution_release }}'; verstion: '{{ ansible_distribution_version }} '"
-
-- name: Disable SELinux
-  selinux:
-    state: disabled
-
-- name: Ensure EPEL repo
-  package:
-    name: epel-release
-    state: present
-
-- name: Ensure release-scl repo (centos)
-  package:
-    name: centos-release-scl
-    state: present
-  when: ansible_distribution == 'CentOS' 
-
-- name: Ensure scl and optional channels (RHEL)
-  rhsm_repository:
-    name: '{{ item }}' 
-    state: enabled
-  loop: 
-    - rhel-server-rhscl-7-rpms
-    - rhel-7-server-optional-rpms
-  when: ansible_distribution == 'RedHat' 
-
-- name: Ensure Remi repo
-  package:
-    name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
-    state: present
-
-- name: Ensure CentOS SCLO repo
-  yum_repository:
-    name: sclo
-    description: CentOS SCLO community repo (for fixing broken dependency in tuleap git plugin)
-    repo_gpgcheck: no
-    enabled: yes
-    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/sclo/
-    gpgkey: https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-SCLo
-    
-- name: Ensure Tuleap repo
-  yum_repository:
-    name: tuleap
-    description: Tuleap
-    state: present
-    repo_gpgcheck: no
-    enabled: yes
-    baseurl: 'https://ci.tuleap.net/yum/tuleap/rhel/7/{{ tuleap.branch }}/x86_64/'
-    gpgkey: https://ci.tuleap.net/yum/tuleap/gpg.key
-
 - name: Ensure mysql installed
   package:
     name: "{{ item }}"
@@ -66,19 +13,35 @@
     enabled: yes
     state: started
 
+# - name: Ensure tuleap packages
+#   package:
+#     name: "{{ item }}"
+#     state: present
+#   loop:
+#     - tuleap 
+#     - tuleap-plugin-agiledashboard 
+#     - tuleap-plugin-graphontrackers 
+#     - tuleap-theme-burningparrot 
+#     - tuleap-theme-flamingparrot 
+#     - tuleap-plugin-ldap
+#     - tuleap-plugin-git 
+#     - tuleap-plugin-pullrequest
+
+# Installing with yum with the hope that the issue with git repos was due to 
+# the fact that packages were not installed at the same time / correct order
 - name: Ensure tuleap packages
-  package:
-    name: "{{ item }}"
+  yum:
+    name:
+      - tuleap 
+      - tuleap-plugin-agiledashboard 
+      - tuleap-plugin-graphontrackers 
+      - tuleap-theme-burningparrot 
+      - tuleap-theme-flamingparrot 
+      - tuleap-plugin-ldap
+      - tuleap-plugin-git 
+      - tuleap-plugin-pullrequest
     state: present
-  loop:
-    - tuleap 
-    - tuleap-plugin-agiledashboard 
-    - tuleap-plugin-graphontrackers 
-    - tuleap-theme-burningparrot 
-    - tuleap-theme-flamingparrot 
-    - tuleap-plugin-ldap
-    - tuleap-plugin-git 
-    - tuleap-plugin-pullrequest
+
 
 # # The following plugins have missing dependencies on RHEL (sclo-git212-git)
 # - name: Ensure (CentOS only) tuleap plugins
@@ -96,3 +59,5 @@
     regexp: 'if \(\$lri && count\(\$lri\) === 1\)'
     line: '        if ($lri && count($lri) > 0) {'
     create: no
+
+

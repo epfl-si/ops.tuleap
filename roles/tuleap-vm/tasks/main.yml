@@ -4,6 +4,10 @@
   import_tasks: tmp.yml
   tags: tmp
 
+- name: Prepare to tuleap installation
+  import_tasks: prepare.yml
+  tags: prepare
+
 - name: Install Tuleap
   import_tasks: install.yml
   tags: install

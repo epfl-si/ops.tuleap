@@ -113,6 +113,7 @@
     path: /etc/tuleap/conf/local.inc
     regexp: '^\$sys_auth_type'
     line: "$sys_auth_type = 'ldap';"
+  register: ldap_configuration
 
 - name: ensure dir for ldap config
   file:
@@ -124,17 +125,30 @@
     src: ldap.inc
     dest: /etc/tuleap/plugins/ldap/etc/ldap.inc
 
-# - name: ensure gitolite git directory
-#   file:
-#     path: /var/lib/gitolite/.ssh
-#     state: directory
+- name: restart tuleap php app once ldap plugin is configured
+  service:
+    name: tuleap-php-fpm
+    state: restarted
+  when: ldap_configuration.changed
 
-# - name: check if ssh key for gitolite is present
-#   stat:
-#     path: /var/lib/gitolite/.ssh
-#   register: gitolite_ssh_dir
+# ----------------------------------------------------------------- Tuleap extra
 
-# - name: add server name to localhost
-#   blockinfile:
-#     path: "/etc/hosts"
-#     block: "127.0.0.1  {{ tuleap.server_name }}"
+- name: configure tuleap sender email
+  lineinfile:
+    path: /etc/tuleap/conf/local.inc
+    regexp: '^\$sys_noreply'
+    line: $sys_noreply = '"Tuleap" <noreply@epfl.ch>';
+
+- name: configure tuleap site administrator
+  lineinfile:
+    path: /etc/tuleap/conf/local.inc
+    regexp: '^\$sys_email_admin'
+    line: $sys_email_admin = '{{ tuleap.site_admin_email }}';
+
+- name: configure tuleap contact email
+  lineinfile:
+    path: /etc/tuleap/conf/local.inc
+    regexp: '^\$sys_email_contact'
+    line: $sys_email_contact = '{{ tuleap.contact_email }}';
+
+

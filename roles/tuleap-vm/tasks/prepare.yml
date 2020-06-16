@@ -1,0 +1,49 @@
+- include_vars: tuleap-vars.yml
+
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+- name: Ensure EPEL repo
+  package:
+    name: epel-release
+    state: present
+
+- name: Ensure release-scl repo (centos)
+  package:
+    name: centos-release-scl
+    state: present
+  when: ansible_distribution == 'CentOS' 
+
+- name: Ensure scl and optional channels (RHEL)
+  rhsm_repository:
+    name: '{{ item }}' 
+    state: enabled
+  loop: 
+    - rhel-server-rhscl-7-rpms
+    - rhel-7-server-optional-rpms
+  when: ansible_distribution == 'RedHat' 
+
+- name: Ensure Remi repo
+  package:
+    name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: Ensure CentOS SCLO repo
+  yum_repository:
+    name: sclo
+    description: CentOS SCLO community repo (for fixing broken dependency in tuleap git plugin)
+    repo_gpgcheck: no
+    enabled: yes
+    baseurl: http://mirror.centos.org/centos/7/sclo/x86_64/sclo/
+    gpgkey: https://www.centos.org/keys/RPM-GPG-KEY-CentOS-SIG-SCLo
+    
+- name: Ensure Tuleap repo
+  yum_repository:
+    name: tuleap
+    description: Tuleap
+    state: present
+    repo_gpgcheck: no
+    enabled: yes
+    baseurl: 'https://ci.tuleap.net/yum/tuleap/rhel/7/{{ tuleap.branch }}/x86_64/'
+    gpgkey: https://ci.tuleap.net/yum/tuleap/gpg.key
