@@ -21,8 +21,7 @@
   gather_facts: yes
   roles:
     - role: roles/tuleap-vm
-    # this only works with CentOS 6 !!!!!!!!!!!
-    # - {role: Enalean.Tuleap, tuleap_version=master, tuleap_domain=tuleap.dev.jkldsa.com}
+
 
 
 

@@ -29,7 +29,16 @@ all:
       ansible_port: 22
       ansible_user: root
       appdomain: epfl.ch
-      tuleap_server_name: tuleap-test.epfl.ch
+      tuleap_server_name: etuleap.dev.jkldsa.com
+
+    # ./tulsible -l prod [-t install]
+    prod:
+      ansible_host: 10.95.80.63
+      ansible_port: 22
+      ansible_user: root
+      appdomain: epfl.ch
+      tuleap_server_name: tuleap.epfl.ch
+
 
     # ./tulsible -l vagrant [-t install]
     vagrant:
@@ -40,6 +49,3 @@ all:
       ansible_become: yes
       become_method: sudo
       tuleap_server_name: tuleap.dev.jkldsa.com
-
-
-
