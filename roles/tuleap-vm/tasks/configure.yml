@@ -1,6 +1,28 @@
 - include_vars: mysql-vars.yml
 - include_vars: tuleap-vars.yml
 
+# Will have to do something better here...
+- name: Disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+# ------------------------------------------------------------------------ Email
+- name: configure postfix inet protocol
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: '^inet_protocols'
+    line: inet_protocols = ipv4
+  register: postfix_config
+
+
+- name: restart postfix if needed
+  service:
+    name: postfix
+    state: restarted
+  when: postfix_config.changed
+
 # ------------------------------------------------------------ SQL root password
 # This command will fail when the root password was set previously
 - name: Check if root password is set
