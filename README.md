@@ -23,6 +23,10 @@ It closely follow the [official installation guide][install]
 
 ## Configuration
 
+### Email
+E-mail use the local smtp server (postfix). The only issue is that, by default
+postfix is using all protocols and fails to start on IPv4-only machine like ours.
+
 ### LDAP
 Configuration for the LDAP plugin is in 
 `/etc/tuleap/plugins/ldap/etc/ldap.inc`. Relevant parameters for EPFL: 
@@ -34,6 +38,13 @@ basedn: ou=idev-fsd,ou=si-idev,ou=si,o=epfl,c=ch
 and the fact that the _unique idendifier_ is not `employeeNumber` but `uniqueidentifier`.
 
 Since the same `uid` can be found in several branches of the LDAP tree, a tiny patch was introduced in `/usr/share/tuleap/plugins/ldap/include/LDAP.class.php`. **NEEDS TESTING!**
+
+After installing the ldap plugin, `tuleap-php-fpm` service needs to be restarted.
+The annoying thing is that I cannot find a way to activate the plugins
+programmaticaly. Therefore, after the first ansible run, the admin must activate
+the plugin manually. At that point LDAP login will not work because ldap config
+will have been overwritten. Therefore, in order for it to work, a second 
+ansible run is necessary.
 
 ### GIT
 In principle, once installed and enabled the git plugin, repositories can be 
