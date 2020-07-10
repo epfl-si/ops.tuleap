@@ -47,3 +47,16 @@
     enabled: yes
     baseurl: 'https://ci.tuleap.net/yum/tuleap/rhel/7/{{ tuleap.branch }}/x86_64/'
     gpgkey: https://ci.tuleap.net/yum/tuleap/gpg.key
+
+- name: Add ssh keys
+  authorized_key:
+    user: root
+    manage_dir: yes
+    state: present
+    key: '{{ item }}'
+    # exclusive yes deletes the file at every run leading to spurious changes
+    # exclusive: yes
+  with_items:
+    - https://github.com/multiscan.keys
+    - https://github.com/domq.keys
+
