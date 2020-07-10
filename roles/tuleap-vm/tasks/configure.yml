@@ -151,4 +151,20 @@
     regexp: '^\$sys_email_contact'
     line: $sys_email_contact = '{{ tuleap.contact_email }}';
 
+# --------------------------- experimental: disable local ssl because we use A10
+# set the following line in /etc/tuleap/conf/local.inc 
+# $sys_https_host = FALSE; // 'tuleap.epfl.ch';
+# replace /etc/nginx/conf.d/tuleap.conf with the nginx.conf template
+
+- name: ensure nginx delegate https to external load balancer
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/conf.d/tuleap.conf
+
+- name: ensure tuleap does not redirect to https
+  lineinfile:
+    path: /etc/tuleap/conf/local.inc
+    regexp: '^\$sys_https_host'
+    line: $sys_https_host = FALSE;
+
 
